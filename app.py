@@ -118,7 +118,7 @@ if st.button("Generate PDF Report"):
     width, height = A4
 
     logo_path = os.path.abspath("logo.jpg")  # Define the logo path first
-st.write(f"Using logo path: {logo_path}")  # Then print it
+
 
 if os.path.exists(logo_path):
     try:
