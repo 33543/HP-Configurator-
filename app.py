@@ -3,6 +3,9 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Display the logo
+st.image("logo.jpg", width=300)
+
 st.title("Renewable Energy Analysis")
 
 # User Inputs
@@ -37,21 +40,28 @@ carbon_hp = electricity_needed * electricity_emission_factor
 carbon_savings = carbon_gas - carbon_hp
 
 # Outputs
-st.markdown("### 🔧 System Sizing")
-st.write(f"**Estimated Peak Gas Input Required:** {peak_gas_input_kw:.2f} kW")
-st.write(f"**Required Heat Pump Size (based on same load):** {required_heat_pump_kw:.2f} kW")
-st.write(f"**Annual Electricity Needed (Heat Pump):** {electricity_needed:.0f} kWh")
+st.subheader("System Sizing")
+st.write(f"Estimated Peak Gas Input Required: {peak_gas_input_kw:.2f} kW")
+st.write(f"Required Heat Pump Size: {required_heat_pump_kw:.2f} kW")
+st.write(f"Annual Electricity Needed: {electricity_needed:.0f} kWh")
 
-st.markdown("### 💷 Cost Comparison")
-st.write(f"**Annual Heating Cost (Gas):** £{cost_gas:.2f}")
-st.write(f"**Annual Heating Cost (Heat Pump):** £{cost_electric:.2f}")
-st.write(f"**Annual Savings:** £{savings:.2f}")
-st.write(f"**CAPEX:** £{capex:.2f}")
+st.subheader("Cost Comparison")
+st.write(f"Annual Heating Cost (Gas): £{cost_gas:.2f}")
+st.write(f"Annual Heating Cost (Heat Pump): £{cost_electric:.2f}")
+st.write(f"Annual Savings: £{savings:.2f}")
+st.write(f"CAPEX: £{capex:.2f}")
 
-st.markdown("### 🌍 Carbon Savings")
-st.write(f"**Annual Emissions (Gas):** {carbon_gas:.1f} kg CO₂e")
-st.write(f"**Annual Emissions (Heat Pump):** {carbon_hp:.1f} kg CO₂e")
-st.write(f"**Carbon Saved per Year:** {carbon_savings:.1f} kg CO₂e")
+st.subheader("Carbon Savings")
+st.write(f"Annual Emissions (Gas): {carbon_gas:.1f} kg CO₂e")
+st.write(f"Annual Emissions (Heat Pump): {carbon_hp:.1f} kg CO₂e")
+st.write(f"Carbon Saved per Year: {carbon_savings:.1f} kg CO₂e")
+
+st.subheader("Payback Period")
+if savings > 0:
+    payback_years = capex / savings
+    st.write(f"Estimated Payback Period: {payback_years:.1f} years")
+else:
+    st.write("No payback possible with current settings (savings are zero or negative).")
 
 # Chart
 fig, ax = plt.subplots()
@@ -61,10 +71,3 @@ ax.bar(labels, costs, color=["grey", "green"])
 ax.set_ylabel('Annual Cost (£)')
 ax.set_title('Heating Cost Comparison')
 st.pyplot(fig)
-
-st.markdown("### 📈 Payback Period")
-if savings > 0:
-    payback_years = capex / savings
-    st.write(f"**Estimated Payback Period:** {payback_years:.1f} years")
-else:
-    st.write("**No payback possible with current settings (savings are zero or negative).**")
