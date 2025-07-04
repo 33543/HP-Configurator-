@@ -34,7 +34,7 @@ gas_emission_option = st.selectbox(
 if gas_emission_option == "Default - 0.183":
     gas_emission_factor = 0.183
 else:
-    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor", key="custom_gas_emission" (kg CO₂e/kWh)", value=0.183)
+    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor (kg CO2e/kWh)", key="custom_gas_emission", value=0.183)
 
 
 # Emission Factors (kg CO₂e per kWh)
@@ -50,7 +50,7 @@ gas_emission_option = st.selectbox(
 if gas_emission_option == "Default - 0.183":
     gas_emission_factor = 0.183
 else:
-    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor", key="custom_gas_emission" (kg CO₂e/kWh)", value=0.183)
+    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor (kg CO2e/kWh)", key="custom_gas_emission", value=0.183)
 
 
 emission_option = st.selectbox(
