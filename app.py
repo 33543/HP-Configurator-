@@ -117,20 +117,6 @@ if st.button("Generate PDF Report"):
     c = canvas.Canvas(pdf_buffer, pagesize=A4)
     width, height = A4
 
-    logo_path = os.path.abspath("logo.jpg")  # Define the logo path first
-
-
-if os.path.exists(logo_path):
-    try:
-        c.drawImage(logo_path, 40, height - 100, width=150, preserveAspectRatio=True, mask='auto')
-        st.success("Logo added to PDF.")
-    except Exception as e:
-        st.warning(f"Logo found but could not be loaded into PDF: {e}")
-else:
-    st.warning("Logo not found for PDF.")
-
-    y = height - 140  # Adjusted starting Y to account for logo height
-
     # Write wrapped lines
     text_lines = [
         "Renewable Energy Analysis",
