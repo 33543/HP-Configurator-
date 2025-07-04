@@ -34,7 +34,7 @@ gas_emission_option = st.selectbox(
 if gas_emission_option == "Default - 0.183":
     gas_emission_factor = 0.183
 else:
-    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor (kg CO₂e/kWh)", value=0.183)
+    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor", key="custom_gas_emission" (kg CO₂e/kWh)", value=0.183)
 
 
 # Emission Factors (kg CO₂e per kWh)
@@ -50,7 +50,7 @@ gas_emission_option = st.selectbox(
 if gas_emission_option == "Default - 0.183":
     gas_emission_factor = 0.183
 else:
-    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor (kg CO₂e/kWh)", value=0.183)
+    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor", key="custom_gas_emission" (kg CO₂e/kWh)", value=0.183)
 
 
 emission_option = st.selectbox(
@@ -67,7 +67,7 @@ if emission_option == "Full system (generation + T&D) - 0.225":
 elif emission_option == "Generation only - 0.124":
     electricity_emission_factor = 0.124
 else:
-    electricity_emission_factor = st.number_input("Enter Custom Electricity Emission Factor (kg CO₂e/kWh)", value=0.220)
+    electricity_emission_factor = st.number_input("Enter Custom Electricity Emission Factor", key="custom_elec_emission" (kg CO₂e/kWh)", value=0.220)
 
 
 # Adjust heating demand for boiler inefficiency
