@@ -67,8 +67,7 @@ if emission_option == "Full system (generation + T&D) - 0.225":
 elif emission_option == "Generation only - 0.124":
     electricity_emission_factor = 0.124
 else:
-    electricity_emission_factor = st.number_input("Enter Custom Electricity Emission Factor", key="custom_elec_emission" (kg CO₂e/kWh)", value=0.220)
-
+    electricity_emission_factor = st.number_input("Enter Custom Electricity Emission Factor (kg CO2e/kWh)", key="custom_elec_emission", value=0.220)
 
 # Adjust heating demand for boiler inefficiency
 adjusted_gas_demand = heating_demand / (boiler_efficiency / 100)
