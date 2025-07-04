@@ -117,7 +117,7 @@ if st.button("Generate PDF Report"):
     c = canvas.Canvas(pdf_buffer, pagesize=A4)
     width, height = A4
 
-    logo_path = os.path.abspath("logo.jpg")
+logo_path = os.path.abspath("logo.jpg")
 st.write(f"Using logo path: {logo_path}")
 
 if os.path.exists(logo_path):
