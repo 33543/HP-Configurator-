@@ -61,3 +61,10 @@ ax.bar(labels, costs, color=["grey", "green"])
 ax.set_ylabel('Annual Cost (£)')
 ax.set_title('Heating Cost Comparison')
 st.pyplot(fig)
+
+st.markdown("### 📈 Payback Period")
+if savings > 0:
+    payback_years = capex / savings
+    st.write(f"**Estimated Payback Period:** {payback_years:.1f} years")
+else:
+    st.write("**No payback possible with current settings (savings are zero or negative).**")
