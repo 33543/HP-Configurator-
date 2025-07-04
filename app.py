@@ -2,6 +2,10 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
 
 # Display the logo
 st.image("logo.jpg", width=300)
@@ -71,3 +75,65 @@ ax.bar(labels, costs, color=["grey", "green"])
 ax.set_ylabel('Annual Cost (£)')
 ax.set_title('Heating Cost Comparison')
 st.pyplot(fig)
+
+# PDF Generation
+st.subheader("Generate and Download Report")
+
+if st.button("Generate PDF Report"):
+    img_buffer = BytesIO()
+    fig.savefig(img_buffer, format='PNG')
+    img_buffer.seek(0)
+    chart_image = ImageReader(img_buffer)
+
+    pdf_buffer = BytesIO()
+    c = canvas.Canvas(pdf_buffer, pagesize=A4)
+    width, height = A4
+
+    try:
+        c.drawImage("logo.jpg", 40, height - 100, width=150, preserveAspectRatio=True)
+    except:
+        st.warning("Logo not found or failed to load.")
+
+    text = c.beginText(40, height - 150)
+    text.setFont("Helvetica", 12)
+    payback_text = f"Estimated Payback Period: {payback_years:.1f} years" if savings > 0 else "No payback possible with current settings"
+    text.textLines("""
+Renewable Energy Analysis
+
+System Sizing
+- Estimated Peak Gas Input Required: {:.2f} kW
+- Required Heat Pump Size: {:.2f} kW
+- Annual Electricity Needed: {:.0f} kWh
+
+Cost Comparison
+- Annual Heating Cost (Gas): £{:.2f}
+- Annual Heating Cost (Heat Pump): £{:.2f}
+- Annual Savings: £{:.2f}
+- CAPEX: £{:.2f}
+
+Carbon Savings
+- Annual Emissions (Gas): {:.1f} kg CO₂e
+- Annual Emissions (Heat Pump): {:.1f} kg CO₂e
+- Carbon Saved per Year: {:.1f} kg CO₂e
+
+Payback Period
+- {}
+""".format(
+        peak_gas_input_kw,
+        required_heat_pump_kw,
+        electricity_needed,
+        cost_gas,
+        cost_electric,
+        savings,
+        capex,
+        carbon_gas,
+        carbon_hp,
+        carbon_savings,
+        payback_text
+    ))
+    c.drawText(text)
+    c.drawImage(chart_image, 40, 150, width=500, preserveAspectRatio=True, mask='auto')
+    c.showPage()
+    c.save()
+    pdf_buffer.seek(0)
+    st.download_button("Download PDF Report", data=pdf_buffer, file_name="renewable_energy_report.pdf", mime="application/pdf")
