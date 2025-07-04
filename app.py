@@ -22,8 +22,53 @@ elec_price = st.number_input("Electricity Price (pence/kWh)", value=24.0)
 capex = st.number_input("Capital Cost of Heat Pump System (£)", value=12000)
 
 # Emission Factors (kg CO₂e per kWh)
-gas_emission_factor = 0.183
-electricity_emission_factor = 0.074
+
+gas_emission_option = st.selectbox(
+    "Select Gas Emission Factor Source",
+    (
+        "Default - 0.183",
+        "Custom value"
+    )
+)
+
+if gas_emission_option == "Default - 0.183":
+    gas_emission_factor = 0.183
+else:
+    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor (kg CO₂e/kWh)", value=0.183)
+
+
+# Emission Factors (kg CO₂e per kWh)
+
+gas_emission_option = st.selectbox(
+    "Select Gas Emission Factor Source",
+    (
+        "Default - 0.183",
+        "Custom value"
+    )
+)
+
+if gas_emission_option == "Default - 0.183":
+    gas_emission_factor = 0.183
+else:
+    gas_emission_factor = st.number_input("Enter Custom Gas Emission Factor (kg CO₂e/kWh)", value=0.183)
+
+
+emission_option = st.selectbox(
+    "Select Electricity Emission Factor Source",
+    (
+        "Full system (generation + T&D) - 0.225",
+        "Generation only - 0.124",
+        "Custom value"
+    )
+)
+
+if emission_option == "Full system (generation + T&D) - 0.225":
+    electricity_emission_factor = 0.225
+elif emission_option == "Generation only - 0.124":
+    electricity_emission_factor = 0.124
+else:
+    electricity_emission_factor = st.number_input("Enter Custom Electricity Emission Factor (kg CO₂e/kWh)", value=0.220)
+
 
 # Adjust heating demand for boiler inefficiency
 adjusted_gas_demand = heating_demand / (boiler_efficiency / 100)
@@ -89,51 +134,50 @@ if st.button("Generate PDF Report"):
     c = canvas.Canvas(pdf_buffer, pagesize=A4)
     width, height = A4
 
+    # Add logo if available
     try:
-        c.drawImage("logo.jpg", 40, height - 100, width=150, preserveAspectRatio=True)
-    except:
+        c.drawImage("logo.jpg", 40, height - 80, width=150, preserveAspectRatio=True, mask='auto')
+    except Exception as e:
         st.warning("Logo not found or failed to load.")
 
-    text = c.beginText(40, height - 150)
-    text.setFont("Helvetica", 12)
-    payback_text = f"Estimated Payback Period: {payback_years:.1f} years" if savings > 0 else "No payback possible with current settings"
-    text.textLines("""
-Renewable Energy Analysis
+    # Write wrapped lines
+    text_lines = [
+        "Renewable Energy Analysis",
+        "",
+        "System Sizing",
+        f"- Estimated Peak Gas Input Required: {peak_gas_input_kw:.2f} kW",
+        f"- Required Heat Pump Size: {required_heat_pump_kw:.2f} kW",
+        f"- Annual Electricity Needed: {electricity_needed:.0f} kWh",
+        "",
+        "Cost Comparison",
+        f"- Annual Heating Cost (Gas): £{cost_gas:.2f}",
+        f"- Annual Heating Cost (Heat Pump): £{cost_electric:.2f}",
+        f"- Annual Savings: £{savings:.2f}",
+        f"- CAPEX: £{capex:.2f}",
+        "",
+        "Carbon Savings",
+        f"- Annual Emissions (Gas): {carbon_gas:.1f} kg CO₂e",
+        f"- Annual Emissions (Heat Pump): {carbon_hp:.1f} kg CO₂e",
+        f"- Carbon Saved per Year: {carbon_savings:.1f} kg CO₂e",
+        "",
+        "Payback Period",
+        f"- {'Estimated Payback Period: {:.1f} years'.format(payback_years) if savings > 0 else 'No payback possible with current settings'}"
+    ]
 
-System Sizing
-- Estimated Peak Gas Input Required: {:.2f} kW
-- Required Heat Pump Size: {:.2f} kW
-- Annual Electricity Needed: {:.0f} kWh
+    y = height - 120
+    for line in text_lines:
+        if y < 100:
+            c.showPage()
+            y = height - 50
+        c.drawString(40, y, line)
+        y -= 20
 
-Cost Comparison
-- Annual Heating Cost (Gas): £{:.2f}
-- Annual Heating Cost (Heat Pump): £{:.2f}
-- Annual Savings: £{:.2f}
-- CAPEX: £{:.2f}
+    # Add chart on a new page
+    c.showPage()
+    c.drawImage(chart_image, 40, height / 2 - 150, width=500, preserveAspectRatio=True, mask='auto')
 
-Carbon Savings
-- Annual Emissions (Gas): {:.1f} kg CO₂e
-- Annual Emissions (Heat Pump): {:.1f} kg CO₂e
-- Carbon Saved per Year: {:.1f} kg CO₂e
-
-Payback Period
-- {}
-""".format(
-        peak_gas_input_kw,
-        required_heat_pump_kw,
-        electricity_needed,
-        cost_gas,
-        cost_electric,
-        savings,
-        capex,
-        carbon_gas,
-        carbon_hp,
-        carbon_savings,
-        payback_text
-    ))
-    c.drawText(text)
-    c.drawImage(chart_image, 40, 150, width=500, preserveAspectRatio=True, mask='auto')
     c.showPage()
     c.save()
+
     pdf_buffer.seek(0)
     st.download_button("Download PDF Report", data=pdf_buffer, file_name="renewable_energy_report.pdf", mime="application/pdf")
