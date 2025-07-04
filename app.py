@@ -104,7 +104,6 @@ ax.set_ylabel('Annual Cost (£)')
 ax.set_title('Heating Cost Comparison')
 st.pyplot(fig)
 
-# PDF Generation
 st.subheader("Generate and Download Report")
 
 if st.button("Generate PDF Report"):
@@ -118,10 +117,16 @@ if st.button("Generate PDF Report"):
     width, height = A4
 
     # Add logo if available
-    try:
-        c.drawImage("logo.jpg", 40, height - 80, width=150, preserveAspectRatio=True, mask='auto')
-    except Exception as e:
-        st.warning("Logo not found or failed to load.")
+    logo_path = "logo.jpg"
+    if os.path.exists(logo_path):
+        try:
+            c.drawImage(logo_path, 40, height - 100, width=150, preserveAspectRatio=True, mask='auto')
+        except Exception as e:
+            st.warning("Logo found but could not be loaded into PDF.")
+    else:
+        st.warning("Logo not found for PDF.")
+
+    y = height - 140  # Adjusted starting Y to account for logo height
 
     # Write wrapped lines
     text_lines = [
